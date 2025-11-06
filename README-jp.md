@@ -5,17 +5,23 @@
 ![Last Commit](https://img.shields.io/github/last-commit/heiwa4126/whoruv)
 [![PyPI - License](https://img.shields.io/pypi/l/whoruv.svg)](https://opensource.org/licenses/MIT)
 
-## Overview
+## 概要
 
-A package that displays the following information when installed and executed with [Astral's uv](https://docs.astral.sh/uv/) using `uvx` or `uv tool install`:
+[Astral の uv](https://docs.astral.sh/uv/) で、
+`uvx` や
+`uv tool install` でインストール&実行されたときの、
 
-- Python version
-- Python executable path
-- Script path
+- Python のバージョンと、
+- Python の実行ファイルのパスと、
+- スクリプト自身のパス
 
-Created to understand the effects of uv's `--python` option.
+を表示するパッケージ。
 
-## Usage Examples
+uv の
+`--python`
+オプションの効果などを知るために作成した。
+
+## 実行例
 
 ```console
 $ uvx whoruv
@@ -54,36 +60,36 @@ Executable Path: /home/user1/.local/share/uv/tools/whoruv/bin/python
 Script Path: /home/user1/.local/share/uv/tools/whoruv/lib/python3.10/site-packages/whoruv/whoruv.py
 ```
 
-## Development
+## 開発
 
-### Setup
+### セットアップ
 
 ```bash
 uv sync
 ```
 
-### Task Execution
+### タスク実行
 
 ```bash
-# Run tests
+# テスト実行
 poe test
 
-# Lint and format
+# リント・フォーマット
 poe check
 poe format
 
-# Type check
+# 型チェック
 poe mypy
 
-# Run all checks
+# 全チェック実行
 poe before
 ```
 
-### Development Requirements
+### 開発要件
 
 - Python >= 3.12
 - uv
 
-## License
+## ライセンス
 
 MIT
