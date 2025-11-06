@@ -20,3 +20,41 @@
 uv の
 `--python`
 オプションの効果などを知るために作成した。
+
+## 実行例
+
+(TODO)
+
+## 開発
+
+### セットアップ
+
+```bash
+uv sync
+```
+
+### タスク実行
+
+```bash
+# テスト実行
+poe test
+
+# リント・フォーマット
+poe check
+poe format
+
+# 型チェック
+poe mypy
+
+# 全チェック実行
+poe before
+```
+
+### 開発要件
+
+- Python >= 3.12
+- uv
+
+## ライセンス
+
+MIT
