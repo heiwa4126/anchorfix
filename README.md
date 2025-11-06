@@ -5,6 +5,8 @@
 ![Last Commit](https://img.shields.io/github/last-commit/heiwa4126/whoruv)
 [![PyPI - License](https://img.shields.io/pypi/l/whoruv.svg)](https://opensource.org/licenses/MIT)
 
+English | [日本語](https://github.com/heiwa4126/whoruv/blob/main/README-ja.md)
+
 ## Overview
 
 A package that displays the following information when installed and executed with [Astral's uv](https://docs.astral.sh/uv/) using `uvx` or `uv tool install`:

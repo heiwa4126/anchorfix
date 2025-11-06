@@ -5,6 +5,8 @@
 ![Last Commit](https://img.shields.io/github/last-commit/heiwa4126/whoruv)
 [![PyPI - License](https://img.shields.io/pypi/l/whoruv.svg)](https://opensource.org/licenses/MIT)
 
+[English](https://github.com/heiwa4126/whoruv/blob/main/README.md) | 日本語
+
 ## 概要
 
 [Astral の uv](https://docs.astral.sh/uv/) で、
