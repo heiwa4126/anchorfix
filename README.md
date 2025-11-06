@@ -9,7 +9,7 @@
 
 [Astral の uv](https://docs.astral.sh/uv/) で、
 `uvx` や
-`uv tool install` でインストール/実行されたときの、
+`uv tool install` でインストール&実行されたときの、
 
 - Python のバージョンと、
 - Python の実行ファイルのパスと、
