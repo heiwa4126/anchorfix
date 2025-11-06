@@ -1,6 +1,6 @@
 [project]
 name = "whoruv"
-version = "0.0.1"
+version = "0.0.2"
 description = "Display Python version, executable path, and script path when run with uv"
 keywords = ["uv", "python", "version", "path", "tool"]
 classifiers = [
