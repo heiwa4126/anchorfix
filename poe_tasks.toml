@@ -9,8 +9,7 @@ TRIVY_IGNORE = "--skip-dirs ./tmp,./xml"
 SHELL = "bash"
 
 [tasks]
-main = "${RUN_BASE}/main.py"
-cli = "whoruv"
+main = "whoruv"
 
 # ======== tests
 test = "pytest -v --tb=short src"
