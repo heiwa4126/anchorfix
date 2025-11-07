@@ -1,6 +1,6 @@
 [project]
 name = "whoruv"
-version = "0.0.4-b1"
+version = "0.0.4a1"
 # uv automatically converts versions to either:
 # - Regular releases: e.g. v1.2.3
 # - Pre-releases: e.g. v1.2.3rc1, v1.2.3b1, v1.2.3a1 (PEP 440 format)

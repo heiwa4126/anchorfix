@@ -381,7 +381,7 @@ wheels = [
 
 [[package]]
 name = "whoruv"
-version = "0.0.4b1"
+version = "0.0.4a1"
 source = { editable = "." }
 
 [package.dev-dependencies]
