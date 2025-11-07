@@ -30,15 +30,16 @@ jobs:
       - name: Build distribution packages
         id: build
         run: |
-          uv build
+          # uv build
+          poe build
           echo "package-built=true" >> "$GITHUB_OUTPUT"
 
-      # Verify that the built packages work correctly
-      - name: Test wheel installation
-        run: uv run --isolated --no-project --with dist/*.whl whoruv
+      # # Verify that the built packages work correctly
+      # - name: Test wheel installation
+      #   run: uv run --isolated --no-project --with dist/*.whl whoruv
 
-      - name: Test source distribution installation
-        run: uv run --isolated --no-project --with dist/*.tar.gz whoruv
+      # - name: Test source distribution installation
+      #   run: uv run --isolated --no-project --with dist/*.tar.gz whoruv
 
       - name: Upload built packages as artifact
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0

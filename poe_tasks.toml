@@ -16,20 +16,32 @@ cli = "whoruv"
 test = "pytest -v --tb=short src"
 tests = ["test"]
 
+# ======== smoke tests
+smoke1 = "uv run --isolated --no-project --with dist/*.whl whoruv"
+smoke2 = "uv run --isolated --no-project --with dist/*.tar.gz whoruv"
+smoketest = ["smoke1", "smoke2"]
+
 # ======== lint
 check = "ruff check ./src"
 mypy = "mypy src"
-pyproject = "validate-pyproject pyproject.toml"
+pyprojectlint = "validate-pyproject pyproject.toml"
 actionlint = "actionlint"
 
-# ======== before-build
-before = [
+# ======== build
+clean = "rm -rf dist"
+pack = "uv build"
+
+# ======== build
+build = [
   "check",
-  "format",
+  # "format",
   "mypy",
   "tests",
-  "pyproject",
-  "actionlint",
+  "pyprojectlint",
+  # "actionlint",
+  "clean",
+  "pack",
+  "smoketest",
 ]
 
 # ======== utils

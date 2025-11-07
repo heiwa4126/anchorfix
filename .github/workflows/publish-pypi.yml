@@ -3,11 +3,10 @@ name: Build and Publish to PyPI
 on:
   push:
     tags:
-      # 通常リリース: 例) v1.2.3
+      # Regular releases: e.g. v1.2.3
       - "v[0-9]+.[0-9]+.[0-9]+"
-      # プリリリースのみ: 例) v1.2.3-rc.1, v1.2.3-beta など(必ず '-' が付く)
-      - "v[0-9]+.[0-9]+.[0-9]+-*"
-
+      # Pre-releases: e.g. v1.2.3rc1, v1.2.3b1, v1.2.3a1 (PEP 440 format)
+      - "v[0-9]+.[0-9]+.[0-9]+(a|b|rc)[0-9]+"
 jobs:
   build:
     name: Build package

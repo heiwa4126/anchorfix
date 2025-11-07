@@ -5,7 +5,6 @@
 ![Last Commit](https://img.shields.io/github/last-commit/heiwa4126/whoruv)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-
 English | [日本語](https://github.com/heiwa4126/whoruv/blob/main/README-ja.md)
 
 ## Overview
