@@ -31,7 +31,8 @@ lint = ["pep440check","check","mypy","pyprojectlint"]
 "lint-full" = ["lint","actionlint"]
 
 # ======== build
-clean = "rm -rf dist"
+# clean = "rm -rf dist"
+clean = "python -c \"import shutil; shutil.rmtree('dist', ignore_errors=True)\""
 pack = "uv build"
 
 # ======== build
