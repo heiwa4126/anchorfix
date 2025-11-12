@@ -7,6 +7,22 @@ resolution-markers = [
 ]
 
 [[package]]
+name = "bumpuv"
+version = "0.0.4"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "colorama" },
+    { name = "gitpython" },
+    { name = "packaging" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
+    { name = "tomli-w" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/39/ee/61598aeea54a90b68fc086981ae5d54c1ac93c7b857a16b6ddaa7e1ab931/bumpuv-0.0.4.tar.gz", hash = "sha256:ae98067d3a985ee2b2803b97328850ad5a31a19f70efb0a0d28379de979d5449", size = 5770, upload-time = "2025-11-12T02:02:17.519Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/05/4b/e5e35f8a6320d394e734b8b395a3813cff809ebf24574176e0298863b5fc/bumpuv-0.0.4-py3-none-any.whl", hash = "sha256:bc386a9bc455a39a6ecdc4e25de2e243d630d3aca0a46872fdfcb779bf5455dd", size = 6826, upload-time = "2025-11-12T02:02:16.141Z" },
+]
+
+[[package]]
 name = "colorama"
 version = "0.4.6"
 source = { registry = "https://pypi.org/simple" }
@@ -34,6 +50,31 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/20/b5/23b216d9d985a956623b6bd12d4086b60f0059b27799f23016af04a74ea1/fastjsonschema-2.21.2.tar.gz", hash = "sha256:b1eb43748041c880796cd077f1a07c3d94e93ae84bba5ed36800a33554ae05de", size = 374130, upload-time = "2025-08-14T18:49:36.666Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/cb/a8/20d0723294217e47de6d9e2e40fd4a9d2f7c4b6ef974babd482a59743694/fastjsonschema-2.21.2-py3-none-any.whl", hash = "sha256:1c797122d0a86c5cace2e54bf4e819c36223b552017172f32c5c024a6b77e463", size = 24024, upload-time = "2025-08-14T18:49:34.776Z" },
+]
+
+[[package]]
+name = "gitdb"
+version = "4.0.12"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "smmap" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/72/94/63b0fc47eb32792c7ba1fe1b694daec9a63620db1e313033d18140c2320a/gitdb-4.0.12.tar.gz", hash = "sha256:5ef71f855d191a3326fcfbc0d5da835f26b13fbcba60c32c21091c349ffdb571", size = 394684, upload-time = "2025-01-02T07:20:46.413Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a0/61/5c78b91c3143ed5c14207f463aecfc8f9dbb5092fb2869baf37c273b2705/gitdb-4.0.12-py3-none-any.whl", hash = "sha256:67073e15955400952c6565cc3e707c554a4eea2e428946f7a4c162fab9bd9bcf", size = 62794, upload-time = "2025-01-02T07:20:43.624Z" },
+]
+
+[[package]]
+name = "gitpython"
+version = "3.1.45"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "gitdb" },
+    { name = "typing-extensions", marker = "python_full_version < '3.10'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9a/c8/dd58967d119baab745caec2f9d853297cec1989ec1d63f677d3880632b88/gitpython-3.1.45.tar.gz", hash = "sha256:85b0ee964ceddf211c41b9f27a49086010a190fd8132a24e21f362a4b36a791c", size = 215076, upload-time = "2025-07-24T03:45:54.871Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/01/61/d4b89fec821f72385526e1b9d9a3a0385dda4a72b206d28049e2c7cd39b8/gitpython-3.1.45-py3-none-any.whl", hash = "sha256:8908cb2e02fb3b93b7eb0f2827125cb699869470432cc885f019b8fd0fccff77", size = 208168, upload-time = "2025-07-24T03:45:52.517Z" },
 ]
 
 [[package]]
@@ -149,14 +190,14 @@ wheels = [
 
 [[package]]
 name = "pep440check"
-version = "0.0.1"
+version = "0.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "packaging" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/26/e5/bd87788eb2a08b1dbeaa223dd6a1299d322ed292f81e5ec65c6ab454507d/pep440check-0.0.1.tar.gz", hash = "sha256:ead0ee3331cef3d1ea156c90e44965854a213058f3f614a240507927e257b5d6", size = 3749, upload-time = "2025-11-07T10:14:10.26Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/ff/30/c469228a0d8b9f9a1be680bf9c04ef8896b89363d1a2873b58a06938f2d6/pep440check-0.0.2.tar.gz", hash = "sha256:f376c6b842e6964a06b4f65cdbd846d0f196fe56d833226914b74198fc582e8c", size = 3762, upload-time = "2025-11-12T02:12:26.887Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d3/12/25649b83ab7dfa35e1a82ee29d13e655b09ea027e3d1fe97a0e185a1269f/pep440check-0.0.1-py3-none-any.whl", hash = "sha256:7316b60f55ee2914994e9cfa8f6a5748fecec456e9b303301ee9b62335d3ff46", size = 4882, upload-time = "2025-11-07T10:14:09.123Z" },
+    { url = "https://files.pythonhosted.org/packages/92/57/8e4b958c3c44c6216289280aa1bb1f8e3df9b70945e7a4e50acc10a1c8e4/pep440check-0.0.2-py3-none-any.whl", hash = "sha256:d77f02c20781d72e2659d32390b00de5bad53e1917ab7c763148527aae96c403", size = 4884, upload-time = "2025-11-12T02:12:25.866Z" },
 ]
 
 [[package]]
@@ -333,6 +374,15 @@ wheels = [
 ]
 
 [[package]]
+name = "smmap"
+version = "5.0.2"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/44/cd/a040c4b3119bbe532e5b0732286f805445375489fceaec1f48306068ee3b/smmap-5.0.2.tar.gz", hash = "sha256:26ea65a03958fa0c8a1c7e8c7a58fdc77221b8910f6be2131affade476898ad5", size = 22329, upload-time = "2025-01-02T07:14:40.909Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/04/be/d09147ad1ec7934636ad912901c5fd7667e1c858e19d355237db0d0cd5e4/smmap-5.0.2-py3-none-any.whl", hash = "sha256:b30115f0def7d7531d22a0fb6502488d879e75b260a9db4d0819cfb25403af5e", size = 24303, upload-time = "2025-01-02T07:14:38.724Z" },
+]
+
+[[package]]
 name = "tomli"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -382,6 +432,15 @@ wheels = [
 ]
 
 [[package]]
+name = "tomli-w"
+version = "1.2.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/19/75/241269d1da26b624c0d5e110e8149093c759b7a286138f4efd61a60e75fe/tomli_w-1.2.0.tar.gz", hash = "sha256:2dd14fac5a47c27be9cd4c976af5a12d87fb1f0b4512f81d69cce3b35ae25021", size = 7184, upload-time = "2025-01-15T12:07:24.262Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c7/18/c86eb8e0202e32dd3df50d43d7ff9854f8e0603945ff398974c1d91ac1ef/tomli_w-1.2.0-py3-none-any.whl", hash = "sha256:188306098d013b691fcadc011abd66727d3c414c571bb01b1a174ba8c983cf90", size = 6675, upload-time = "2025-01-15T12:07:22.074Z" },
+]
+
+[[package]]
 name = "typing-extensions"
 version = "4.15.0"
 source = { registry = "https://pypi.org/simple" }
@@ -404,11 +463,12 @@ wheels = [
 
 [[package]]
 name = "whoruv"
-version = "0.0.4a1"
+version = "0.0.4"
 source = { editable = "." }
 
 [package.dev-dependencies]
 dev = [
+    { name = "bumpuv" },
     { name = "mypy" },
     { name = "pep440check" },
     { name = "poethepoet" },
@@ -422,6 +482,7 @@ dev = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "bumpuv", specifier = ">=0.0.4" },
     { name = "mypy", specifier = ">=1.18.1" },
     { name = "pep440check", specifier = ">=0.0.1" },
     { name = "poethepoet", specifier = ">=0.37.0" },
