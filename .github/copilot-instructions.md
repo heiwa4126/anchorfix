@@ -53,9 +53,11 @@ See `poe_tasks.toml` for all available tasks.
 ## Dependencies
 
 **Runtime dependencies:**
+
 - beautifulsoup4 (HTML parsing)
 
 **Development dependencies:**
+
 - mypy (type checking)
 - pytest (testing)
 - ruff (linting & formatting)
@@ -65,6 +67,7 @@ See `poe_tasks.toml` for all available tasks.
 - validate-pyproject (project validation)
 
 Add dependencies with:
+
 ```bash
 uv add <package>           # Runtime dependency
 uv add --dev <package>     # Development dependency
@@ -134,6 +137,7 @@ uv add --dev <package>     # Development dependency
 ## Quality Checks
 
 All code must pass:
+
 - `poe check` (ruff linting)
 - `poe mypy` (type checking with no errors)
 - `poe test` (all 19 tests passing)
@@ -146,6 +150,6 @@ When providing complete file contents or large code blocks that contain nested c
 
 Example:
 
-````markdown
-[complete file content here with nested ```code blocks```]
-````
+```markdown
+[complete file content here with nested `code blocks`]
+```
