@@ -10,7 +10,7 @@ class PythonInfo:
     script_path: str
 
 
-def whoruv() -> PythonInfo:
+def anchorfix() -> PythonInfo:
     return PythonInfo(
         version=sys.version,
         executable_path=sys.executable,

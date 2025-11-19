@@ -1,9 +1,9 @@
-# whoruv Project Rules
+# anchorfix Project Rules
 
 ## Project Overview
 
 - This is a Python package that displays Python version, executable path, and script path when run with Astral's uv
-- Package name: whoruv
+- Package name: anchorfix
 - Target Python version: >=3.10
 - Build system: uv_build
 - License: MIT
@@ -28,6 +28,6 @@
 
 ## File Structure
 
-- Source code in `src/whoruv/`
+- Source code in `src/anchorfix/`
 - Tests alongside source files with `_test.py` suffix
 - Exclude test files from wheel distribution

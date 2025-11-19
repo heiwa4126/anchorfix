@@ -8,6 +8,6 @@
 		"Sigstore",
 		"smoketest",
 		"testpypi",
-		"whoruv"
+		"anchorfix"
 	]
 }

@@ -40,10 +40,10 @@ jobs:
 
       # # Verify that the built packages work correctly
       # - name: Test wheel installation
-      #   run: uv run --isolated --no-project --with dist/*.whl whoruv
+      #   run: uv run --isolated --no-project --with dist/*.whl anchorfix
 
       # - name: Test source distribution installation
-      #   run: uv run --isolated --no-project --with dist/*.tar.gz whoruv
+      #   run: uv run --isolated --no-project --with dist/*.tar.gz anchorfix
 
       - name: Upload built packages as artifact
         uses: actions/upload-artifact@330a01c490aca151604b8cf639adc76d48f6c5d4 # v5.0.0

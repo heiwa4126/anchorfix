@@ -1,12 +1,12 @@
 import os
 import sys
 
-from whoruv import PythonInfo, whoruv
-from whoruv._core import format_python_info
+from anchorfix import PythonInfo, anchorfix
+from anchorfix._core import format_python_info
 
 
-def test_whoruv():
-    result = whoruv()
+def test_anchorfix():
+    result = anchorfix()
     assert isinstance(result, PythonInfo)
     assert result.version == sys.version
     assert result.executable_path == sys.executable
