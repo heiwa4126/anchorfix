@@ -1,0 +1,844 @@
+<p>
+<a href="https://www.sigstore.dev/">Sigstore</a> について
+</p>
+<ul>
+<li>
+<a href="https://one.nec.com/post/2546781">検証(verify)編</a>
+</li>
+<li>
+<a href="https://one.nec.com/post/2546791">署名(sign)編</a> ←★ 今ココ
+    </li>
+<li>
+<a href="https://one.nec.com/post/2546821">理論編</a>
+</li>
+</ul>
+<p>
+    の 3 つの記事で解説します。
+</p>
+<p>
+<strong>目次</strong>
+</p>
+<ul>
+<li>
+<a href="#a0001">cosign で任意のファイルに 署名する</a>
+<ul>
+<li>
+<a href="#a0006">署名を検証する</a>
+</li>
+<li>
+<a href="#a0007">解説: 最初のメッセージ</a>
+</li>
+<li>
+<a href="#a0008">解説: 最後のメッセージ</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#a0002">npm パッケージに Sigstore 署名する</a>
+</li>
+<li>
+<a href="#a0003">PyPI パッケージに Sigstore 署名する</a>
+<ul>
+<li>
+<a href="#a0009">uv で PyPI パッケージを作る手順 (非 Trusted publishing 版)</a>
+</li>
+<li>
+<a href="#pypitestpypi-%E3%81%A7-trusted-publishing-%E3%81%AE%E8%A8%AD%E5%AE%9A%E3%82%92%E3%81%99%E3%82%8B">PyPI/TestPyPI で Trusted publishing の設定をする</a>
+</li>
+<li>
+<a href="#a0011">GitHub Actions 用の各フィールドの説明</a>
+<ul>
+<li>
+<a href="#a0013">PyPI Project Name (新プロジェクトの場合のみ存在する)</a>
+</li>
+<li>
+<a href="#a0014">Owner (リポジトリの所有者)</a>
+</li>
+<li>
+<a href="#a0015">Repository name (リポジトリ名)</a>
+</li>
+<li>
+<a href="#a0016">Workflow name(ワークフローファイルのパス)</a>
+</li>
+<li>
+<a href="#a0017">Environment (任意)</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#a0012">プロジェクトに workflow を追加する</a>
+</li>
+</ul>
+</li>
+<li>
+<a href="#a0004">Docker イメージに署名</a>
+</li>
+<li>
+<a href="#a0005">署名編まとめ</a>
+</li>
+</ul>
+<h2 id="a0001">
+    cosign で任意のファイルに 署名する
+</h2>
+<p>
+    Sigstore は OIDC トークンのクレーム(属性情報)から 事実(predicates)を取得します。 なのでまず OIDC アカウントを 1 つ用意してください。
+</p>
+<p>
+    具体的には:
+</p>
+<ul>
+<li>
+        GitHub のアカウント (GitHub のユーザ名ではなく、GitHub アカウントの email アドレス)
+    </li>
+<li>
+        Google アカウント
+    </li>
+<li>
+        Microsoft アカウント
+    </li>
+</ul>
+<p>
+    を準備してください。 この方法で使える OIDC イシュアに関して詳細は <a href="https://docs.sigstore.dev/certificate_authority/oidc-in-fulcio/#email">OIDC Usage in Fulcio - Sigstore の Email 節</a> の "Dex" の項を参照。
+</p>
+<p>
+    では適当なファイルを作って Sigstore 署名してみましょう。
+</p>
+<pre><code class="language-plaintext language-sh">echo hello &gt; hello.txt
+cosign sign-blob hello.txt --bundle hello.txt.sigstore
+# バンドルの拡張子は .sigstore, .sig など。.bundleはあまり推奨されない</code></pre>
+<p>
+    上記を実行すると、まず以下のようなメッセージが表示されます。
+</p>
+<pre><code class="language-plaintext language-text">setting TUF refresh period to 24h0m0s
+Using payload from: hello.txt
+Generating ephemeral keys...
+Retrieving signed certificate...
+        The sigstore service, hosted by sigstore a Series of LF Projects, LLC, is provided pursuant to the Hosted Project Tools Terms of Use, available at https://lfprojects.org/policies/hosted-project-tools-terms-of-use/.
+        Note that if your submission includes personal data associated with this signed artifact, it will be part of an immutable record.
+        This may include the email address associated with the account with which you authenticate your contractual Agreement.
+        This information will be used for signing this artifact and will be stored in public transparency logs and cannot be removed later, and is subject to the Immutable Record notice at https://lfprojects.org/policies/hosted-project-tools-immutable-records/.
+By typing 'y', you attest that (1) you are not submitting the personal data of any other person; and (2) you understand and agree to the statement and the Agreement terms at the URLs listed above.
+Are you sure you would like to continue? [y/N]</code></pre>
+<p>
+    (解説は後で)
+</p>
+<p>
+    ここで <code>[y/N] y リターンキー</code>すると
+</p>
+<p>
+    出力例:
+</p>
+<pre><code class="language-plaintext language-text">Your browser will now be opened to:
+https://oauth2.sigstore.dev/auth/auth?(略)</code></pre>
+<p>
+    Sigstore が管理している <a href="https://github.com/dexidp/dex">Dex</a> サーバへの URL が
+</p>
+<ul>
+<li>
+        表示されるので、これをブラウザで開いて
+    </li>
+<li>
+        またはブラウザが起動されるので (WSL だったら wslu の wslview を使うのが便利)
+    </li>
+</ul>
+<p>
+    GitHub, Google, Microsoft を選択してログインしてください。
+</p>
+<p>
+    認証完了後コンソール側には以下のような表示がされます (解説は後で)
+</p>
+<pre><code class="language-plaintext language-text">Successfully verified SCT...
+tlog entry created with index: 456789012
+Wrote bundle to file hello.txt.sigstore
+MEQCICjg8RjaiUwabur5dQMJTFWrS0GU(略)==</code></pre>
+<p>
+    これで署名が完了したので
+</p>
+<ul>
+<li>
+        hello.txt
+    </li>
+<li>
+        hello.txt.sigstore
+    </li>
+</ul>
+<p>
+    をセットにして、どこかに置けば完了です。
+</p>
+<p>
+    細かいことを言うと、この <code>cosign sign-blob</code>で作った .sigstore ファイルには構造化された attestation が含まれておらず、検証する場合でも署名とハッシュだけを検証します。後述する PyPI や npm パッケージとは違うところです。この 2 つは「ローカル署名(署名バンドル)」と「来歴/プロヴェナンス署名(アテステーション)」とか、Signature と Attestation と呼ばれているようですが確立した用語はありません。
+</p>
+<h3 id="a0006">
+    署名を検証する
+</h3>
+<p>
+    署名を検証する場合は、検証(verify)編で書いたように
+</p>
+<pre><code class="language-plaintext language-sh">cosign verify-blob hello.txt --bundle hello.txt.sigstore \
+  --certificate-identity 'your-email-address@somewhere.com' \
+  --certificate-oidc-issuer 下の表参照</code></pre>
+<p>
+    各 OIDC プロバイダーの <code>--certificate-oidc-issuer</code> 値は
+</p>
+<div class="table-layer">
+<table class="table-headling-x">
+<thead>
+<tr>
+<th>
+                    プロバイダー
+                </th>
+<th>
+                    オプション値
+                </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<strong>Google</strong>
+</td>
+<td>
+<code>https://accounts.google.com</code>
+</td>
+</tr>
+<tr>
+<td>
+<strong>Microsoft</strong>
+</td>
+<td>
+<code>https://login.microsoftonline.com</code>
+</td>
+</tr>
+<tr>
+<td>
+<strong>GitHub</strong>
+</td>
+<td>
+<code>https://github.com/login/oauth</code>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+    です。
+</p>
+<h3 id="a0007">
+    解説: 最初のメッセージ
+</h3>
+<p>
+<strong>※ここと次の節は難しいので</strong>「<a href="#a0002">npm パッケージに Sigstore 署名する</a>」まで読み飛ばしてもかまいません。
+</p>
+<p>
+    まず最初のメッセージを逐語訳します:
+</p>
+<pre><code class="language-plaintext language-text">TUF の更新期間を 24時間0分0秒 に設定しています
+hello.txt からペイロードを使用します
+一時的な鍵を生成中...
+署名付き証明書を取得中...
+    sigstore サービスは、LF Projects, LLC の一連のプロジェクトである sigstore によってホストされており、
+    https://lfprojects.org/policies/hosted-project-tools-terms-of-use/ に記載された
+    「ホストプロジェクトツール利用規約」に従って提供されます。
+    あなたの提出物に、この署名済みアーティファクトに関連する個人データが含まれる場合、
+    それは変更不可能な記録の一部となります。
+    これには、あなたが認証に使用するアカウントに関連付けられたメールアドレスが含まれる場合があります。
+    この情報は、このアーティファクトの署名に使用され、
+    公開の透明性ログに保存され、後で削除することはできません。
+    また、https://lfprojects.org/policies/hosted-project-tools-immutable-records/ に記載された
+    「変更不可能な記録に関する通知」の対象となります。
+'y' と入力することで、あなたは次のことを表明します:
+(1) 他人の個人データを提出していないこと
+(2) 上記の URL に記載された声明および契約条件を理解し、同意すること
+続行してもよろしいですか? [y/N]</code></pre>
+<p>
+    意味は以下の通り。
+</p>
+<ol>
+<li>
+        TUF 更新期間<br/>
+<a href="https://theupdateframework.io/">TUF (The Update Framework)</a> は、署名やメタデータの安全な配布を管理する仕組みです。ここでは、TUF のメタデータを 24 時間ごとに更新する設定になっています。
+    </li>
+<li>
+        一時的な鍵の生成<br/>
+        cosign は、署名のために エフェメラルキー(短命な鍵) を生成します。 これは、長期的な秘密鍵を保持せず、セキュリティを高めるための仕組みです。
+    </li>
+<li>
+        署名付き証明書の取得<br/>
+        Sigstore の Fulcio サービスから、OIDC 認証を使って署名証明書を取得します。 これにより、署名が「誰によって行われたか」を証明できます。
+    </li>
+<li>
+        個人情報と透明性ログ<br/>
+        認証に使ったアカウント(例:GitHub、Google)のメールアドレスが証明書に含まれます。 この情報は 公開の透明性ログ(Rekor) に記録され、削除できません。 これはソフトウェアサプライチェーンの透明性を確保するためです。
+    </li>
+<li>
+        同意事項<br/>
+        他人の個人情報を含めないこと。 上記の利用規約と「変更不可能な記録」に同意すること。
+    </li>
+</ol>
+<p>
+    また文中のリンク LF Projects, LLC の <a href="https://lfprojects.org/policies/hosted-project-tools-terms-of-use/">https://lfprojects.org/policies/hosted-project-tools-terms-of-use/</a> "Hosted Project Tools – Terms of Use (LF Projects のホストツール利用規約)" を要約すると「LF 提供ツールは規約遵守で利用。提出データは公開・削除不可、他人情報禁止、規約変更に同意必須」。
+</p>
+<p>
+    2 つ目のリンク <a href="https://lfprojects.org/policies/hosted-project-tools-immutable-records/">https://lfprojects.org/policies/hosted-project-tools-immutable-records/</a> "Hosted Project Tools – Immutable Record notice(ホストプロジェクトツール – 変更不可能な記録に関する通知)"を要約すると 「Immutable Record は削除不可の公開記録。自分以外の個人情報禁止、提出は自己責任で最小限に」となります。
+</p>
+<p>
+    よくわからないと思いますが、細かい部分は理論編で説明します。 理屈がわかると上の文章はスッキリ読めるはずです。
+</p>
+<h3 id="a0008">
+    解説: 最後のメッセージ
+</h3>
+<p>
+    (再掲)
+</p>
+<pre><code class="language-plaintext language-text">Successfully verified SCT...
+tlog entry created with index: 456789012
+Wrote bundle to file hello.txt.sigstore
+MEQCICjg8RjaiUwabur5dQMJTFWrS0GU(略)==</code></pre>
+<p>
+    解説すると
+</p>
+<ol>
+<li>
+        Successfully verified SCT...<br/>
+        SCT(Signed Certificate Timestamp)の検証成功を意味します。 SCT とは証明書が Certificate Transparency(CT)ログに送られ、ログから「受理した」ことを示す署名付きタイムスタンプ。この段階で発行された短期証明書が CT ログに適切に登録(または登録予定として受理)され、不正発行の検知可能性が担保されたことになります
+    </li>
+<li>
+        tlog entry created with index: 456789012<br/>
+        Rekor(Sigstore の透明性ログ)に、今回の署名エントリが追記され、そのログインデックスが 456789012 であることを示します。ブラウザで <a href="https://search.sigstore.dev/?logIndex=456789012">https://search.sigstore.dev/?logIndex=456789012</a> を開くと、内容が読めます
+    </li>
+<li>
+<p>
+            Wrote bundle to file hello.txt.sigstore<br/>
+            Sigstore Bundle を hello.txt.sigstore に書き出したことを示します。 バンドルに含まれるものは:
+        </p>
+<ul>
+<li>
+                署名本体
+            </li>
+<li>
+                発行された短期証明書(とチェーン)
+            </li>
+<li>
+                Rekor 透明性ログの情報(エントリ、インクルージョン証明 等)
+            </li>
+<li>
+                対象ペイロードのダイジェスト
+            </li>
+</ul>
+<p>
+            で、このファイル 1 つで、後から(場合によってはオフラインでも。条件あり)検証が可能。
+        </p>
+</li>
+<li>
+<p>
+            MEQCICjg8RjaiUwabur5dQMJTFWrS0GU(略)==<br/>
+            これが署名本体(バイナリ署名の Base64 表現)です。上のバンドルに含まれています。また、<a href="https://search.sigstore.dev/?logIndex=456789012">https://search.sigstore.dev/?logIndex=456789012</a> でも見れます。
+        </p>
+<pre><code class="language-plaintext language-sh">echo 'MEQCICjg8RjaiUwabur5dQMJTFWrS0GU(略)==' \
+ | base64 -d &gt; sig.bin
+ openssl asn1parse -inform DER -in sig.bin</code></pre>
+<p>
+            のようにして ECDSA 署名(DER/ASN.1 エンコード)の中身を表示することができます。で、この署名を使って元ファイルを検証するには最初に cosign が生成したエフェメラルな鍵ペアの公開鍵を使います(バンドルファイルに入ってます)。
+        </p>
+<p>
+            またこの「最初に cosign が生成したエフェメラルな鍵ペアの公開鍵」は Fulcio CA によって発行された証明書によって証明されており、これもバンドルファイルに入ってます。 バンドルに入ってないのは Fulcio CA の公開鍵で、これは最初の "setting TUF refresh period to 24h0m0s" のところで安全に自動取得&amp;更新されています。
+        </p>
+</li>
+</ol>
+<h2 id="a0002">
+    npm パッケージに Sigstore 署名する
+</h2>
+<p>
+    2025 年 7 月末から npmjs でも Trusted publishing ができるようになり、これに伴い npm パッケージに Sigstore 署名するのも簡単になりました。なんといっても npm CLI 自体に sigstore が組み込まれているのが強いです。
+</p>
+<ul>
+<li>
+        発表記事 - <a href="https://github.blog/changelog/2025-07-31-npm-trusted-publishing-with-oidc-is-generally-available/">npm trusted publishing with OIDC is generally available - GitHub Changelog</a>
+</li>
+<li>
+        詳細な手順 - <a href="https://docs.npmjs.com/trusted-publishers">Trusted publishing for npm packages | npm Docs</a>
+</li>
+</ul>
+<p>
+    Trusted publishing は要するに npmjs 側で設定をしておくと 特定の GitHub のレポジトリから GitHub Actions の workflow で、npmjs パッケージを直接パブリッシュできるようになる仕組みです。環境変数にアクセストークンを設定する手間が不要になり、アクセストークンを管理する必要もなくなるので、よりセキュアになります (その分 GitHub アカウントをより厳重に管理する必要があるわけですが)。
+</p>
+<p>
+    前章の「<a href="#cosign-%E3%81%A7%E4%BB%BB%E6%84%8F%E3%81%AE%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E3%81%AB-sigstore-%E7%BD%B2%E5%90%8D%E3%81%99%E3%82%8B">cosign で任意のファイルに Sigstore 署名する</a>」で「OIDC トークンのクレーム(属性情報)から Attestation に含める事実(predicate)を取得します」と書きましたが、GitHub から npmjs に Trusted publishing する場合は GitHub の発行した OIDC トークンから 以下のようなクレームを「事実」として取得します(これは PyPI でも同じ)。
+</p>
+<div class="table-layer">
+<table class="table-headling-x">
+<thead>
+<tr>
+<th>
+                    Claim
+                </th>
+<th>
+                    説明
+                </th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>
+<code>sub</code>
+</td>
+<td>
+                    トークンの主体。例: <code>repo:&lt;owner&gt;/&lt;repo&gt;:ref:refs/heads/main</code>
+</td>
+</tr>
+<tr>
+<td>
+<code>aud</code>
+</td>
+<td>
+                    トークンの利用対象。npm や PyPI の OIDC Provider によって検証される
+                </td>
+</tr>
+<tr>
+<td>
+<code>iss</code>
+</td>
+<td>
+                    トークンの発行者。GitHub の OIDC Provider URL (例: <code>https://token.actions.githubusercontent.com</code>)
+                </td>
+</tr>
+<tr>
+<td>
+<code>repository</code>
+</td>
+<td>
+                    実行元の GitHub リポジトリ名
+                </td>
+</tr>
+<tr>
+<td>
+<code>ref</code>
+</td>
+<td>
+                    実行されたブランチやタグ
+                </td>
+</tr>
+<tr>
+<td>
+<code>actor</code>
+</td>
+<td>
+                    実行した GitHub ユーザー名
+                </td>
+</tr>
+<tr>
+<td>
+<code>workflow</code>
+</td>
+<td>
+                    実行されたワークフロー名
+                </td>
+</tr>
+<tr>
+<td>
+<code>sha</code>
+</td>
+<td>
+                    実行されたコミットの SHA
+                </td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>
+    これにより in-toto フレームワークの 3 つの主要コンポーネントのうち Link metadata (実行記録) と Functionaries (実行者) がサポートされます (Functionaries の方は 身元証明のみ。権限定義は Layout で)。
+</p>
+<p>
+    実際に発行する手順は "詳細な手順 - <a href="https://docs.npmjs.com/trusted-publishers">Trusted publishing for npm packages | npm Docs</a>"を読んでほしいのですが、 かいつまんだ手順と、間違いやすいポイントを書いておきます。
+</p>
+<ol>
+<li>
+<code>npm init</code> から始めてローカルでパッケージを作る。コード書いてユニットテスト書いて、lint して formatter にかける。
+    </li>
+<li>
+<pre><code class="language-plaintext language-sh">npm login --auth-type=web
+npm publish --access public</code></pre>
+<p>
+            のようにして、<strong>手動で一回 npm に発行する。必須 (2025-10 現在)</strong>。なお PyPI はこの「手動で一回」が不要。
+        </p>
+</li>
+<li>
+<a href="https://docs.npmjs.com/trusted-publishers#configuring-trusted-publishing">詳細な手順</a>を読んで、 npm 側でいま発行したパッケージに Trusted publishing の設定をする。<strong>これがものすごく間違いやすいので注意</strong>。特に Workflow filename のところは<code>.github/workflows/</code> を除いたファイル名を書くこと。最初は Environment name は設定しなくてもいい(後から設定できる。あったほうがいろいろ便利)
+    </li>
+<li>
+<code>./.github/workflows/</code> 以下にワークフローを書く。<a href="https://docs.npmjs.com/trusted-publishers#github-actions-configuration">詳細な手順</a>からコピペして編集。上で指定した Workflow filename と同じ名前(拡張子も含めて)にすること
+    </li>
+<li>
+<p>
+            上記でコピペしたワークフローの場合、新しく semver タグを付けて push すると実行されるので、
+        </p>
+<pre><code class="language-plaintext language-sh">git commit -am 'commit message'
+npm version 'v9.9.9'
+git push
+git push --tags</code></pre>
+<p>
+            のような手順で。
+        </p>
+</li>
+<li>
+        Actions のログを見て無事発行できたら、npm の該当ページの一番下で、provenance を確認しましょう
+    </li>
+<li>
+        いったん Trusted publishing できるようになったら、セキュリティ向上のため、ローカルから直接 npmjs に発行できないようにする
+        <ul>
+<li>
+                npm の該当プロジェクトの setting の Publishing access で <code>Require two-factor authentication and disallow tokens (recommended)</code> を選択する
+            </li>
+<li>
+                加えてローカルの<code>~/.npmrc</code> を削除する(または編集してトークンを削除)
+            </li>
+</ul>
+</li>
+</ol>
+<p>
+    既存プロジェクトの場合は 3.から実行してください。
+</p>
+<h2 id="a0003">
+    PyPI パッケージに Sigstore 署名する
+</h2>
+<p>
+    PyPI で Trusted publishing するのは、公式ドキュメントがあまり親切でないので細かく書いていきます。加えて pip+twine を使ったドキュメントが多いので、今どきの uv 版でいきます。
+</p>
+<ul>
+<li>
+<a href="https://docs.pypi.org/trusted-publishers/">Trusted Publishers - Getting Started - PyPI Docs</a>
+</li>
+<li>
+<a href="https://docs.pypi.org/trusted-publishers/adding-a-publisher/">Adding a Trusted Publisher to an Existing PyPI Project - PyPI Docs</a>
+</li>
+</ul>
+<h3 id="a0009">
+    uv で PyPI パッケージを作る手順 (非 Trusted publishing 版)
+</h3>
+<p>
+    まず uv でパッケージ作って、PyPI/TestPyPI に発行する簡潔な手順を書いておきます。
+</p>
+<p>
+    この手順では:
+</p>
+<ul>
+<li>
+        Trusted publishing でなく、Sigstore 署名もつかない
+    </li>
+<li>
+        Trusted publishing して Sigstore 署名をするつもりなら、npm と違って「一回手動パブリッシュ」は必要ない
+    </li>
+<li>
+        この節はあくまで説明用
+    </li>
+</ul>
+<p>
+    です。
+</p>
+<pre><code class="language-plaintext language-sh">uv init project1 &amp;&amp; cd  project1
+uv sync
+# コード書く、ユニットテスト書く、テストする、繰り返す
+# 必要なパッケージは `uv add` と `uv add --dev`
+# いい感じに仕上がったら...
+uv build
+# ./dist以下に .tar.gz と .whlができるので
+# 中身を確認して(`tar tzvf` と zipinfo)、余計なものがあったら
+# pyproject.toml の [tool.uv.build-backend] で調整
+# 「パッケージをimportできるか」程度の簡単なテスト(smoke test)
+#  を tests/smoke_test.py などに書いて以下実行
+uv run --isolated --no-project --with "dist/*.whl" tests/smoke_test.py
+uv run --isolated --no-project --with "dist/*.tar.gz" tests/smoke_test.py</code></pre>
+<p>
+    次に PyPI と TestPyPI にアカウントを作り、2FA を設定しておきます。
+</p>
+<p>
+    トークンを取得し手動パブリッシュします。トークンは環境変数に設定してください。
+</p>
+<pre><code class="language-plaintext language-sh"># TestPyPIへパブリッシュ
+uv publish \
+  --publish-url https://test.pypi.org/legacy/ \
+  --token "$TEST_PYPI_TOKEN"
+# PyPIへパブリッシュ
+uv publish --token "$PYPI_TOKEN"</code></pre>
+<p>
+    普通はまず TestPyPI へ発行し、pip で読めるか、<code>[project.scripts]</code>で指定した CLI は動くか、パッケージのページの見栄えやリンク等をチェック後 PyPI へ発行、という手順になると思います。
+</p>
+<h3 id="a0010">
+    PyPI/TestPyPI で Trusted publishing の設定をする
+</h3>
+<p>
+    すでに PyPI/TestPyPI 上にプロジェクトがあるときは:
+</p>
+<ol>
+<li>
+<strong>PyPI(testPyPI)にログイン</strong><br/>
+<a href="https://pypi.org">https://pypi.org</a> (<a href="https://test.pypi.org">https://test.pypi.org</a>) にアクセスし、アカウントでログインします
+    </li>
+<li>
+<strong>対象プロジェクトを選択</strong><br/>
+        右上のメニューから「Your projects (自分のプロジェクト)」をクリックし、設定したいプロジェクトを選びます
+    </li>
+<li>
+<strong>「Manage」ページへ移動</strong><br/>
+        プロジェクト一覧で対象プロジェクトの「Manage (管理)」ボタンをクリック
+    </li>
+<li>
+<strong>「Publishing」メニューを開く</strong><br/>
+        左サイドバーの「Publishing」をクリックします
+    </li>
+<li>
+<strong>"Trusted Publisher Management"に着いたので Trusted Publisher を追加</strong><br/>
+        GitHub タブを選択すると、必要な入力フィールドが表示されます
+    </li>
+</ol>
+<p>
+    一方、新規プロジェクトの場合はこちら。 PyPI/TestPyPI には「空のプロジェクトを作る」機能はありませんが、Trusted Publishing の設定はできます。
+</p>
+<ol>
+<li>
+<strong>PyPI(testPyPI)にログイン</strong><br/>
+<a href="https://pypi.org">https://pypi.org</a> (<a href="https://test.pypi.org">https://test.pypi.org</a>) にアクセスし、アカウントでログインします
+    </li>
+<li>
+<strong>対象プロジェクトを選択</strong><br/>
+        右上のメニューから「Your projects (自分のプロジェクト)」をクリック (ここからが<a href="#%E6%97%A2%E5%AD%98%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%AE%E5%A0%B4%E5%90%88">既存のプロジェクトの場合</a>と違う)
+    </li>
+<li>
+<strong>「Publishing」メニューを開く</strong><br/>
+        左サイドバーの「Publishing」をクリックします
+    </li>
+<li>
+<strong>"Trusted Publisher Management"に着いたので Trusted Publisher を追加</strong><br/>
+        GitHub タブを選択すると、必要な入力フィールドが表示されます
+    </li>
+</ol>
+<h3 id="a0011">
+    GitHub Actions 用の各フィールドの説明
+</h3>
+<p>
+<strong>どの設定も大変間違いやすいので、注意して設定してください</strong>
+</p>
+<p>
+    参考: <a href="https://github.com/pypi/warehouse/blob/main/docs/user/trusted-publishers/adding-a-publisher.md">warehouse/docs/user/trusted-publishers/adding-a-publisher.md at main · pypi/warehouse · GitHub</a>
+</p>
+<h4 id="a0013">
+    PyPI Project Name (新プロジェクトの場合のみ存在する)
+</h4>
+<p>
+    このパブリッシャーを使った時に PyPI/TestPyPI で新しく作成されるプロジェクト名
+</p>
+<h4 id="a0014">
+    Owner (リポジトリの所有者)
+</h4>
+<p>
+<strong>意味:</strong> GitHub 上の組織またはユーザー名(リポジトリの最初の要素)。
+</p>
+<p>
+    例: <code>https://github.com/octo-org/sampleproject</code> の場合、 Owner = octo-org
+</p>
+<p>
+<strong>注意:</strong>
+</p>
+<ul>
+<li>
+        チーム名や表示名ではなく、オーナーのハンドル (org/ユーザー名)を入力します。
+    </li>
+<li>
+        フォークではなく本家の所有者を指定してください (PyPI が信頼するのは指定オーナー配下のワークフローです)
+    </li>
+<li>
+        リポジトリを別オーナーへ Transfer した場合は、この Owner も更新が必要です
+    </li>
+</ul>
+<h4 id="a0015">
+    Repository name (リポジトリ名)
+</h4>
+<p>
+<strong>例:</strong> <code>octo-org/sampleproject</code> の <code>sampleproject</code> に相当
+</p>
+<h4 id="a0016">
+    Workflow name(ワークフローファイルのパス)
+</h4>
+<p>
+<strong>例:</strong> <code>.github/workflows/example.yml</code> だったら <code>example.yml</code> を指定
+</p>
+<p>
+<code>.github/workflows/</code>の部分は含まない。
+</p>
+<h4 id="a0017">
+    Environment (任意)
+</h4>
+<p>
+    GitHub Actions の Environment 名 (例:testpypi)。 PyPI の UI では任意ですが、セキュリティと運用上の理由で利用が強く推奨されています
+</p>
+<h3 id="a0012">
+    プロジェクトに workflow を追加する
+</h3>
+<p>
+    例として <code>.github/workflows/pypi.yml</code>は以下のようなものになります
+</p>
+<pre><code class="language-plaintext language-yaml">name: Build and Publish to PyPI
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+      # TestPyPIだったら "test-*" などで
+jobs:
+  build-and-publish-pypi:
+    name: Build and publish Python package to PyPI
+    runs-on: ubuntu-latest
+    environment: pypi # TestPyPIだったら "testpypi"
+    permissions:
+      id-token: write # IMPORTANT: this permission is mandatory for Trusted Publishing
+      contents: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+      - name: Set up uv
+        uses: astral-sh/setup-uv@b75a909f75acd358c2196fb9a5f1299a9a8868a4 # v6.7.0
+        with:
+          enable-cache: true
+      - name: Set up Python environment
+        run: uv python install
+      - name: Build distribution packages
+        run: uv build
+      # Verify that the built packages work correctly
+      - name: Test wheel installation
+        run: uv run --isolated --no-project --with dist/*.whl tests/smoke_test.py
+      - name: Test source distribution installation
+        run: uv run --isolated --no-project --with dist/*.tar.gz tests/smoke_test.py
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@ed0c53931b1dc9bd32cbe73a98c7f6766f8a527e # v1.13.0
+        # TestPyPIだったら以下をコメントアウト
+        # with:
+        #  repository-url: https://test.pypi.org/legacy/</code></pre>
+<p>
+    ※ アクションの pin は <a href="https://github.com/suzuki-shunsuke/pinact">suzuki-shunsuke/pinact</a> を使用
+</p>
+<p>
+    新しく semver タグを付けて push すると実行されるので、
+</p>
+<pre><code class="language-plaintext language-sh">uv version 'v9.9.9'
+git commit -am 'commit message'
+git tag 'v9.9.9'
+git push
+git push --tags</code></pre>
+<p>
+    のような手順で。
+</p>
+<p>
+    一旦 Trusted publish できるようになったら、 <code>~/.pypirc</code> を編集して、トークンなどを削除しましょう。これで <code>twine upload</code> が認証エラーになります(<code>uv publish</code> には効き目無し)。
+</p>
+<p>
+    また PyPI/TestPyPI には npmjs にあったような「ローカルから直接 npmjs に発行できないようにするスイッチ」がありません。とりあえず使ったアクセストークンを削除しておきましょう。組織で PyPI を使ってる場合は、組織のポリシーで設定できる、という話もありますが、確認できませんでした。
+</p>
+<h2 id="a0004">
+    Docker イメージに署名
+</h2>
+<p>
+    「Docker イメージを GitHub 上で attestations 付きでビルドして Docker Hub や GHCR にパブリッシュする」というのをやってみたかったのですが、 時間がありませんでした。参照リンクだけ書いておきます。
+</p>
+<ul>
+<li>
+<a href="https://www.augmentedmind.de/2025/03/02/docker-image-signing-with-cosign/">Docker Image signing and attestation with Cosign</a> - 評判の良い記事
+    </li>
+<li>
+<a href="https://www.augmentedmind.de/2025/03/09/docker-image-attestations-github/">Docker Image attestation with GitHub attestations</a> - 上の続き
+    </li>
+<li>
+<a href="https://docs.docker.com/dhi/core-concepts/attestations/">Attestations | Docker Docs</a>
+</li>
+<li>
+<a href="https://docs.sigstore.dev/cosign/signing/signing_with_containers/">Signing Containers - Sigstore</a>
+</li>
+<li>
+<a href="https://developer.mamezou-tech.com/blogs/2024/06/03/github-artifact-attenstations/">Artifact Attestations で GitHub Actions ワークフローの成果物の出所情報を検証可能にする | 豆蔵デベロッパーサイト</a>
+</li>
+</ul>
+<p>
+    一般的なワークフローは以下のようになります:
+</p>
+<ol>
+<li>
+        Docker イメージを GitHub Actions 上でビルド
+    </li>
+<li>
+        DockerHub または GitHub Container Registry (GHCR)に push
+    </li>
+<li>
+        cosign でイメージに署名 (cosign sign)
+    </li>
+<li>
+        cosign attest または GitHub 専用の Attestations Action で attestation (例: SLSA Build Provenance, SBOM など)を生成し、証明データをイメージに添付
+    </li>
+</ol>
+<p>
+    GitHub Actions の workflow はこんな感じ(要点のみ):
+</p>
+<pre><code class="language-plaintext language-yaml">permissions:
+  contents: read
+  id-token: write
+  attestations: write # 必須!
+  packages: write # DockerHubはログイン・pushで必要
+jobs:
+  build-push-sign-attest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker login (DockerHub)
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: user/repo:tag
+      - name: Setup cosign
+        uses: sigstore/cosign-installer@v3
+      - name: Sign the image (keyless via OIDC)
+        run: cosign sign --yes user/repo:tag
+      - name: Attest build provenance (SLSA)
+        run: cosign attest --yes --type slsaprovenance user/repo:tag</code></pre>
+<p>
+    attestations 付与時には、<code>cosign attest</code> で <code>--type slsaprovenance</code> (ビルド証明)、<code>--predicate sbom.json</code> (SBOM)など「対応 predicate ファイル」を指定します。
+</p>
+<p>
+    ポイントは
+</p>
+<ul>
+<li>
+        ビルド手順から push、署名、attestations まで自動化できる
+    </li>
+<li>
+        OIDC ベース (keyless signing) をサポート
+    </li>
+<li>
+        attestation の種類 (SLSA Provenance, SPDX/CycloneDX SBOM, スキャン結果等)は目的に応じて選択
+    </li>
+</ul>
+<p>
+    といったところです。
+</p>
+<h2 id="a0005">
+    署名編まとめ
+</h2>
+<p>
+    まとめると:
+</p>
+<ul>
+<li>
+        一般ファイルに署名するのは、ややめんどくさい
+    </li>
+<li>
+        ワークフローでパッケージに attestation 署名するのは、一旦流れができてしまえば簡単
+    </li>
+</ul>
+<p>
+    というところで 「<a href="https://one.nec.com/post/2546821">実践 Sigstore - 理論編</a>」に続きます
+</p>
