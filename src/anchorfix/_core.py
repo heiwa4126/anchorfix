@@ -10,13 +10,13 @@ def normalize_anchor(anchor: str) -> str:
     """
     アンカーIDを正規化する
 
-    URLデコード後、括弧を削除し、連続する空白を1つにまとめる
+    URLデコード後、括弧・コロンを削除し、連続する空白を1つにまとめる
     これにより、CMSが生成した壊れたリンクにも対応できる
     """
     # URLデコード
     decoded = unquote(anchor)
-    # 括弧を削除
-    normalized = re.sub(r"[()（）]", "", decoded)
+    # 括弧とコロンを削除
+    normalized = re.sub(r"[()（）:]", "", decoded)
     # 連続する空白を1つにまとめる
     normalized = re.sub(r"\s+", " ", normalized)
     # 前後の空白を削除
