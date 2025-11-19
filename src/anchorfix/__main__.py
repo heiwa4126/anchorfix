@@ -17,7 +17,7 @@ def main() -> None:
         "-V",
         "--version",
         action="version",
-        version=f"anchorfix {__version__}",
+        version=f"anchorfix v{__version__}",
         help="バージョン情報を表示",
     )
 
