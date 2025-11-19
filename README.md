@@ -135,6 +135,30 @@ HTML で編集できる CMS において、ヘッダテキストに基づいた�
 
 ## 開発者向け
 
+### セットアップ
+
+```bash
+uv sync
+```
+
+### タスク実行
+
+```bash
+# テスト実行
+# テストは `examples/` ディレクトリのサンプルファイルを直接参照します
+poe test
+
+# リント・型チェック
+poe check
+poe mypy
+
+# フォーマット
+poe format
+
+# 全チェック実行&ビルド&スモークテスト
+poe build
+```
+
 ### Property-Based Testing
 
 このプロジェクトでは、Hypothesis を使用した基本的な Property-Based Testing(PBT)を採用しています。
@@ -166,28 +190,6 @@ def test_anchor_format(prefix):
     result = process_html(html, prefix=prefix)
     # 正規表現で形式を確認: {prefix}\d{4}
     # ...
-```
-
-### 依存関係の追加
-
-本体の依存関係:
-
-```bash
-uv add beautifulsoup4
-```
-
-開発用依存関係:
-
-```bash
-uv add --dev hypothesis
-```
-
-### テストの実行
-
-テストは `examples/` ディレクトリのサンプルファイルを直接参照します:
-
-```bash
-uv run pytest
 ```
 
 ## ライセンス

@@ -1,13 +1,19 @@
 {
 	"cSpell.words": [
+		"anchorfix",
+		"beautifulsoup",
+		"bumpuv",
+		"htmlfile",
 		"nektos",
 		"pinact",
 		"PYPI",
+		"pyprojectlint",
 		"rhysd",
+		"rmtree",
 		"shunsuke",
+		"shutil",
 		"Sigstore",
 		"smoketest",
-		"testpypi",
-		"anchorfix"
+		"testpypi"
 	]
 }
