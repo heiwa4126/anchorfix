@@ -16,8 +16,8 @@ test = "pytest -v --tb=short src"
 tests = ["test"]
 
 # ======== smoke tests
-smoke1 = "uv run --isolated --no-project --refresh --with dist/*.whl anchorfix"
-smoke2 = "uv run --isolated --no-project --refresh --with dist/*.tar.gz anchorfix"
+smoke1 = "uv run --isolated --no-project --refresh --with dist/*.whl anchorfix -V"
+smoke2 = "uv run --isolated --no-project --refresh --with dist/*.tar.gz anchorfix -h"
 smoketest = ["smoke1", "smoke2"]
 
 # ======== lint

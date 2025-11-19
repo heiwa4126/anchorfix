@@ -15,7 +15,9 @@ authors = [
 ]
 requires-python = ">=3.9"
 
-dependencies = []
+dependencies = [
+    "beautifulsoup4>=4.14.2",
+]
 
 [project.urls]
 Documentation = "https://github.com/heiwa4126/anchorfix#readme"
@@ -32,6 +34,7 @@ build-backend = "uv_build"
 [dependency-groups]
 dev = [
   "bumpuv>=0.0.4",
+  "hypothesis>=6.141.1",
   "mypy>=1.18.1",
   "pep440check>=0.0.1",
   "poethepoet>=0.37.0",

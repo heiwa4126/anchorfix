@@ -31,3 +31,13 @@
 - Source code in `src/anchorfix/`
 - Tests alongside source files with `_test.py` suffix
 - Exclude test files from wheel distribution
+
+## Output Format for Large Text Blocks
+
+When providing complete file contents or large code blocks that contain nested code blocks (with triple backticks), wrap the entire output in quadruple backticks (````) to prevent markdown parsing issues and allow easy copy-paste.
+
+Example:
+
+```markdown
+[complete file content here with nested `code blocks`]
+```
