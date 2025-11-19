@@ -50,6 +50,20 @@ class TestProcessHtml:
         assert links[1]["href"] == "https://example.com#anchor"  # 外部リンク保持
         assert links[2]["href"] == "#a0001"  # 内部リンク更新
 
+    def test_url_encoded_anchors(self):
+        """URLエンコードされたアンカーの変換(CMSで壊れたリンクのケース)"""
+        html = """
+        <h2 id="sigstore(%E3%82%B7%E3%82%B0%E3%82%B9%E3%83%88%E3%82%A2)-%E3%81%A8%E3%81%AF">Header</h2>
+        <a href="#sigstore%E3%82%B7%E3%82%B0%E3%82%B9%E3%83%88%E3%82%A2-%E3%81%A8%E3%81%AF">Link</a>
+        """
+        result = process_html(html, prefix="a")
+
+        soup = BeautifulSoup(result, "html.parser")
+        # h2のidが変換されていることを確認
+        assert soup.find("h2")["id"] == "a0001"
+        # リンクが正しく更新されていることを確認(正規化により一致)
+        assert soup.find("a", href=True)["href"] == "#a0001"
+
     def test_custom_prefix(self):
         """カスタムプレフィックスの使用"""
         html = '<h2 id="test">Test</h2>'

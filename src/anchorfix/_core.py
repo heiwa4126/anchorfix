@@ -1,7 +1,26 @@
+import re
 from dataclasses import dataclass
 from pathlib import Path
+from urllib.parse import unquote
 
 from bs4 import BeautifulSoup, Tag
+
+
+def normalize_anchor(anchor: str) -> str:
+    """
+    アンカーIDを正規化する
+
+    URLデコード後、括弧を削除し、連続する空白を1つにまとめる
+    これにより、CMSが生成した壊れたリンクにも対応できる
+    """
+    # URLデコード
+    decoded = unquote(anchor)
+    # 括弧を削除
+    normalized = re.sub(r"[()（）]", "", decoded)
+    # 連続する空白を1つにまとめる
+    normalized = re.sub(r"\s+", " ", normalized)
+    # 前後の空白を削除
+    return normalized.strip()
 
 
 @dataclass
@@ -67,13 +86,16 @@ def process_html(html_content: str, prefix: str = "a") -> str:
             raise DuplicateIdError(elem_id, locations)
 
     # アンカーマッピングを作成
+    # 正規化されたIDをキーとして使用し、壊れたリンクにも対応
     mappings: dict[str, str] = {}
     for idx, elem in enumerate(target_elements, start=1):
         old_id = elem.get("id") or elem.get("name")
         new_id = f"{prefix}{idx:04d}"
 
         if old_id and isinstance(old_id, str):
-            mappings[old_id] = new_id
+            # 正規化されたIDでマッピング
+            normalized_id = normalize_anchor(old_id)
+            mappings[normalized_id] = new_id
 
         # id属性を更新
         if elem.get("id"):
@@ -92,8 +114,10 @@ def process_html(html_content: str, prefix: str = "a") -> str:
             and not any(c in href for c in ["://", "/", "\\"])
         ):
             anchor = href[1:]  # #を除去
-            if anchor in mappings:
-                link["href"] = f"#{mappings[anchor]}"
+            # 正規化してマッチング
+            normalized_anchor = normalize_anchor(anchor)
+            if normalized_anchor in mappings:
+                link["href"] = f"#{mappings[normalized_anchor]}"
 
     # HTML文字列として出力
     return str(soup)
