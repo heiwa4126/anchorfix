@@ -69,7 +69,7 @@ wheels = [
 
 [[package]]
 name = "bumpuv"
-version = "0.0.5"
+version = "0.0.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "colorama" },
@@ -78,9 +78,9 @@ dependencies = [
     { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "tomli-w" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/c3/c3/0c0cf75b3ac10ef263783cdf5a2f7279f63908c8e1c23f57d68a1959270e/bumpuv-0.0.5.tar.gz", hash = "sha256:104684fb790b5ebd958e13327b4e6cff354059c2fab5a9a88980f3806504e892", size = 5903, upload-time = "2025-11-17T06:00:54.152Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/12/351a083143b3a3ba1a389493ea5cb6751b482fd84b62d6d45e87ea61a231/bumpuv-0.0.6.tar.gz", hash = "sha256:cc6897dca29e203c9aa38aefd47e7a1d152a3ec90eaa1479ec68d14947247da2", size = 5911, upload-time = "2026-02-13T04:59:44.373Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/41/58/ce252f6dbfdbd26c2f955efd0fc7729e0b0a315707298d81f9f710edff1b/bumpuv-0.0.5-py3-none-any.whl", hash = "sha256:cd9569a5307d28be26ee9795385f9913f597bcd7c4b7743e9c9389b99c6dfacf", size = 6979, upload-time = "2025-11-17T06:00:53.12Z" },
+    { url = "https://files.pythonhosted.org/packages/b2/9c/18d321e33fb8e0887c74bb13fca20fcca03b39bc4fb9053a9ba1f294f198/bumpuv-0.0.6-py3-none-any.whl", hash = "sha256:bebdd0f9a51360059c0244eab04581190ca1a140370bb248d55c49b68ce58ca0", size = 6998, upload-time = "2026-02-13T04:59:43.045Z" },
 ]
 
 [[package]]
