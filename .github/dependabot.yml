@@ -5,18 +5,18 @@
 
 version: 2
 updates:
-  - package-ecosystem: "uv" # See documentation for possible values
+  - package-ecosystem: uv # See documentation for possible values
     directory: "/" # Location of package manifests
     schedule:
-      interval: "monthly"
-    cooldown:
-      default-days: 7
+      interval: monthly
     groups:
       all-dependencies:
         patterns:
           - "*"
+    cooldown:
+      default-days: 7
   - package-ecosystem: github-actions
-    directory: "/"
+    directory: / # GitHub Actions のみ固定で"/"
     schedule:
       interval: monthly
     groups:
