@@ -26,12 +26,12 @@ jobs:
 
     steps:
       - name: Build and publish package to TestPyPI
-        uses: heiwa4126/reusable-workflows/build-uv-package@e1b1d196902211a1f932272f5c21203c573063b5 # v0.0.15
+        uses: heiwa4126/reusable-workflows/build-uv-package@5c03a4bd4faea114238e7fe14222f8b2d23fb4ae # v0.0.16
         with:
           checkout: true
 
       - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        uses: pypa/gh-action-pypi-publish@7245906fb61fa33a13554f9d5fb856fe61758086 # v1.14.3
         with:
           repository-url: https://test.pypi.org/legacy/
           # attestations: true  # PEP740 attestations (enabled by default)
